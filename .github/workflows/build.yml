@@ -22,7 +22,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Replace Node.js setup with Bun setup
       - name: Set up Bun
         uses: oven-sh/setup-bun@v1
         with:
@@ -34,7 +33,7 @@ jobs:
 
       # Build with Bun
       - name: Build Vue App
-        run: bun run build-only
+        run: bun run build
 
       - name: Add .nojekyll (serve underscore assets)
         run: echo > dist/.nojekyll

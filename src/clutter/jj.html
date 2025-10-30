@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+</head>
+<body class="flex p-4">
+
+    <svg viewBox="0 0 200 200" class="w-60 h-60">
+        <path d="M60,80 C20,20 120,20 100,80 
+         C120,140 20,140 60,80 Z"
+            class="fill-red-400 stroke-black stroke-[2]" />
+    </svg>
+
+    <svg viewBox="0 0 200 200" class="w-60 h-60">
+        <path d="M 20,20 L 180,20 L 100,180 Z"
+            class="fill-red-400 stroke-black stroke-[2]" />
+    </svg>
+
+
+    <svg viewBox="0 0 200 200" class="w-60 h-60">
+        <ellipse cx="50" cy="50" rx="40" ry="25" class="fill-pink-400 stroke-black stroke-[2]" />
+
+    </svg>
+
+
+    <svg class="w-40 h-40">
+      <polygon points="50,0 100,100 0,100" class="fill-green-500" />
+    </svg>
+    
+    <svg class="w-40 h-40">
+      <polygon points="50,0 100,38 81,100 19,100 0,38" 
+               class="fill-green-500 stroke-black stroke-[2]" />
+    </svg>
+    <svg class="w-40 h-40">
+      <polygon points="50,0 100,100 0,100" class="fill-red-500 stroke-black stroke-[2]" />
+    </svg>
+    <svg class="w-40 h-40">
+      <polygon points="50,0 100,38 81,100 19,100 0,38" 
+               class="fill-green-500 stroke-black stroke-[2]" />
+    </svg>
+    <svg class="w-40 h-40">
+      <polygon points="25,0 75,0 100,50 75,100 25,100 0,50"
+               class="fill-yellow-500 stroke-black stroke-[2]" />
+    </svg>
+    <svg class="w-40 h-40">
+      <polygon points="45,0 45,0 90,50 75,100 25,100 0,50"
+               class="fill-yellow-500 stroke-black stroke-[2]" />
+    </svg>
+    <svg viewBox="0 0 100 100" class="w-40 h-40">
+      <polygon points="50,0 100,100 0,100" class="fill-purple-500" />
+    </svg>
+    <svg viewBox="0 0 100 100" class="w-40 h-40">
+      <polygon id="poly" class="fill-orange-500 stroke-black" />
+    </svg>
+</body>
+</html>
+
+<!-- <script>
+function regularPolygonPoints(sides, radius=45, cx=50, cy=50) {
+  const step = (2 * Math.PI) / sides;
+  return Array.from({length: sides}, (_, i) => {
+    const x = cx + radius * Math.cos(i * step - Math.PI / 2);
+    const y = cy + radius * Math.sin(i * step - Math.PI / 2);
+    return `${x},${y}`;
+  }).join(" ");
+}
+document.getElementById("poly").setAttribute("points", regularPolygonPoints(6));
+</script> -->

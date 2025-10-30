@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trigger Wizard UI</title>
+  <style>
+    :root {
+      --bg: #f8fafc;           /* slate-50 */
+      --panel: #ffffff;        /* white */
+      --border: #e2e8f0;       /* slate-200 */
+      --border-strong: #cbd5e1;/* slate-300 */
+      --text: #0f172a;         /* slate-900 */
+      --muted: #64748b;        /* slate-500 */
+      --muted-strong: #475569; /* slate-600 */
+      --primary: #2563eb;      /* blue-600 */
+      --primary-weak: #dbeafe; /* blue-100 */
+      --success: #059669;      /* emerald-600 */
+      --danger: #e11d48;       /* rose-600 */
+      --shadow: 0 6px 18px rgba(2,6,23,0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    /* Left Trigger Panel */
+    .trigger-panel {
+      width: 280px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      padding: 12px;
+      float: left;
+      box-shadow: var(--shadow);
+    }
+    .panel-title {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .panel-title h3 { margin: 0; font-size: 14px; letter-spacing: .2px; color: var(--muted-strong); }
+    .panel-actions { display: flex; gap: 6px; }
+    .btn { border: 1px solid var(--border); background: #f8fafc; color: var(--muted-strong); padding: 6px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .btn:hover { background: #f1f5f9; }
+    .btn.primary { border-color: #bfdbfe; background: var(--primary-weak); color: var(--primary); }
+    .btn.danger { border-color: #fecdd3; background: #ffe4e6; color: var(--danger); }
+
+    .filter-row { display:flex; gap:8px; margin-bottom: 10px; }
+    .input, .select { width: 100%; padding: 6px 8px; border:1px solid var(--border); border-radius: 6px; background: white; font-size: 12px; color: var(--text); }
+
+    .trigger-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .trigger-card:hover { background: #f8fafc; border-color: var(--border-strong); }
+    .card-head { display:flex; gap:8px; align-items:center; justify-content: space-between; margin-bottom: 6px; }
+    .card-title { font-weight: 600; font-size: 13px; color: var(--text); }
+    .badge { font-size: 10px; padding: 2px 6px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted-strong); background: #f8fafc; }
+    .badge.success { border-color:#bbf7d0; background:#dcfce7; color: var(--success); }
+    .card-sub { font-size: 12px; color: var(--muted); }
+
+    /* Floating Wizard (like color palette: top-right fixed) */
+    .wizard-float {
+      position: fixed;
+      right: 24px;
+      top: 80px;
+      width: 840px;
+      max-width: calc(100% - 48px);
+      max-height: calc(100% - 120px);
+      overflow: auto;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .wizard-header { display:flex; align-items:center; justify-content: space-between; margin-bottom: 10px; }
+    .wizard-title { display:flex; align-items:center; gap: 10px; }
+    .wizard-title h2 { margin:0; font-size: 16px; }
+    .close { border:none; background: transparent; font-size: 22px; color: var(--muted); cursor: pointer; }
+    .close:hover { color: var(--text); }
+
+    .steps { display:flex; gap:8px; margin-bottom: 12px; }
+    .step { font-size: 11px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted-strong); background: #f8fafc; }
+    .step.active { border-color:#bfdbfe; background:#eff6ff; color: var(--primary); }
+
+    .section { border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:12px; background: #ffffff; }
+    .section h4 { margin:0 0 8px; font-size: 13px; color: var(--muted-strong); }
+
+    .row { display:flex; gap:10px; flex-wrap: wrap; }
+    .col { flex:1; min-width: 220px; }
+
+    label { display:block; font-size: 11px; color: var(--muted-strong); margin-bottom: 4px; }
+    .select, .input { display:block; width:100%; }
+
+    /* Condition Builder */
+    .cond-wrap { background:#f8fafc; border:1px dashed var(--border-strong); border-radius:10px; padding:8px; }
+    .cond-row { display:flex; align-items:center; gap:6px; margin-bottom: 6px; flex-wrap: wrap; }
+    .chip { font-size:10px; padding:2px 6px; border-radius:999px; background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; }
+    .icon-btn { border:1px solid var(--border); background:white; color:var(--muted-strong); border-radius:6px; padding:4px 6px; font-size:12px; cursor:pointer; }
+    .icon-btn:hover { background:#f1f5f9; }
+
+    /* Actions Flow */
+    .actions-flow { display:flex; align-items:stretch; gap:8px; overflow-x:auto; padding:8px; background:#f8fafc; border:1px solid var(--border); border-radius:10px; }
+    .action-card { background:white; border:1px solid var(--border); border-radius:10px; padding:8px; min-width: 200px; box-shadow: 0 1px 2px rgba(2,6,23,0.06); display:flex; flex-direction:column; gap:6px; }
+    .action-top { display:flex; align-items:center; justify-content: space-between; }
+    .drag { cursor:grab; color: var(--muted); }
+    .action-label { font-weight:600; font-size:12px; }
+    .action-controls { display:flex; gap:6px; justify-content:flex-end; }
+    .pill { font-size:10px; padding:2px 6px; border-radius:999px; background:#ecfeff; color:#155e75; border:1px solid #a5f3fc; }
+
+    /* Footer */
+    .wizard-footer { display:flex; justify-content:flex-end; gap:8px; margin-top: 12px; }
+    .btn.save { background: var(--primary); color:white; border-color: #1d4ed8; }
+    .btn.save:hover { filter: brightness(0.95); }
+    .btn.discard { background: #fee2e2; border-color:#fecaca; color: var(--danger); }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- This file is a visual skeleton only; no JS is wired. -->
+</head>
+<body>
+
+  <!-- Left Trigger Panel (next to styles panel in app) -->
+  <aside class="trigger-panel" aria-label="Triggers panel">
+    <div class="panel-title">
+      <h3>Triggers</h3>
+      <div class="panel-actions">
+        <button class="btn primary">New</button>
+        <button class="btn">Edit</button>
+        <button class="btn">Duplicate</button>
+        <button class="btn danger">Delete</button>
+        <button class="btn">Vars</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <select class="select" aria-label="Filter by timeline">
+        <option>All timelines</option>
+        <option>timeline: intro</option>
+        <option>timeline: outro</option>
+      </select>
+    </div>
+    <div class="trigger-card" role="button" tabindex="0">
+      <div class="card-head">
+        <div class="card-title">Timeline Cue → Play</div>
+        <span class="badge success">enabled</span>
+      </div>
+      <div class="card-sub">On cue "intro.start" → Play timeline "intro"</div>
+    </div>
+    <div class="trigger-card" role="button" tabindex="0">
+      <div class="card-head">
+        <div class="card-title">Element Click → Log</div>
+        <span class="badge">disabled</span>
+      </div>
+      <div class="card-sub">When #cta clicked → Log "CTA fired"</div>
+    </div>
+  </aside>
+
+  <!-- Wizard floating panel (like color palette position) -->
+  <section class="wizard-float" aria-label="Trigger wizard">
+    <header class="wizard-header">
+      <div class="wizard-title">
+        <h2>Trigger Wizard</h2>
+        <span class="badge">Draft</span>
+      </div>
+      <button class="close" aria-label="Close wizard">&times;</button>
+    </header>
+
+    <nav class="steps" aria-label="Steps">
+      <span class="step active">1 · Source</span>
+      <span class="step">2 · Conditions</span>
+      <span class="step">3 · Actions</span>
+      <span class="step">4 · Review</span>
+    </nav>
+
+    <!-- Source & Event -->
+    <section class="section">
+      <h4>Source & Event</h4>
+      <div class="row">
+        <div class="col">
+          <label for="src-kind">Source</label>
+          <select id="src-kind" class="select">
+            <option value>Choose…</option>
+            <option>Timeline</option>
+            <option>Element</option>
+            <option>Timer</option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="src-event">Event</label>
+          <select id="src-event" class="select">
+            <option value>Choose…</option>
+            <option>cue</option>
+            <option>play</option>
+            <option>pause</option>
+            <option>stop</option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="src-target">Target</label>
+          <select id="src-target" class="select">
+            <option value>Choose…</option>
+            <option>timeline: intro</option>
+            <option>timeline: outro</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <div class="col">
+          <label for="cue-name">Cue (optional)</label>
+          <input id="cue-name" class="input" placeholder="cue id or name" />
+        </div>
+        <div class="col">
+          <label for="timer-delay">Timer (ms)</label>
+          <input id="timer-delay" type="number" class="input" placeholder="e.g. 1000" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Conditions -->
+    <section class="section">
+      <div style="display:flex; align-items:center; justify-content: space-between; margin-bottom:6px;">
+        <h4>Conditions (optional)</h4>
+        <div style="display:flex; gap:6px;">
+          <button class="icon-btn" title="Add condition">+ Add</button>
+          <button class="icon-btn" title="Clear">Clear</button>
+        </div>
+      </div>
+      <div class="cond-wrap">
+        <div class="cond-row">
+          <select class="select" style="max-width:160px;">
+            <option>var: user.plan</option>
+            <option>var: isPro</option>
+          </select>
+          <select class="select" style="max-width:100px;">
+            <option>==</option>
+            <option>!=</option>
+            <option>&gt;=</option>
+            <option>&lt;=</option>
+          </select>
+          <select class="select" style="max-width:120px;">
+            <option>value</option>
+            <option>variable</option>
+          </select>
+          <input class="input" style="max-width:140px;" placeholder="pro" />
+          <button class="icon-btn" title="Delete">Del</button>
+          <span class="chip">AND</span>
+        </div>
+        <div class="cond-row">
+          <select class="select" style="max-width:160px;">
+            <option>var: clicks</option>
+          </select>
+          <select class="select" style="max-width:100px;">
+            <option>&gt;</option>
+            <option>&lt;</option>
+          </select>
+          <input class="input" type="number" style="max-width:120px;" value="0" />
+          <button class="icon-btn" title="Delete">Del</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="section">
+      <div style="display:flex; align-items:center; justify-content: space-between; margin-bottom:6px;">
+        <h4>Actions</h4>
+        <button class="icon-btn">+ Add action</button>
+      </div>
+      <div class="actions-flow">
+        <div class="action-card">
+          <div class="action-top">
+            <span class="drag">≡</span>
+            <span class="action-label">Log</span>
+            <span class="pill">if plan == pro</span>
+          </div>
+          <label>Message</label>
+          <input class="input" value="CTA fired" />
+          <div class="action-controls">
+            <button class="icon-btn">Edit</button>
+            <button class="icon-btn">Del</button>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-top">
+            <span class="drag">≡</span>
+            <span class="action-label">Play Timeline</span>
+          </div>
+          <label>Timeline</label>
+          <select class="select"><option>intro</option><option>outro</option></select>
+          <div class="action-controls">
+            <button class="icon-btn">Edit</button>
+            <button class="icon-btn">Del</button>
+          </div>
+        </div>
+        <div class="action-card">
+          <div class="action-top">
+            <span class="drag">≡</span>
+            <span class="action-label">Seek Timeline</span>
+          </div>
+          <label>Time (ms)</label>
+          <input class="input" type="number" value="1200" />
+          <div class="action-controls">
+            <button class="icon-btn">Edit</button>
+            <button class="icon-btn">Del</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="wizard-footer">
+      <button class="btn discard">Discard</button>
+      <button class="btn save">Save</button>
+    </footer>
+  </section>
+
+</body>
+</html>

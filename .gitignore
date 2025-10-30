@@ -2,7 +2,8 @@
 node_modules
 /build
 /target
-/.svelte-kit
+/docs
+/.vscode
 /package
 .env
 .env.*

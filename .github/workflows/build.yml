@@ -35,13 +35,26 @@ jobs:
       - name: Build Vue App
         run: bun run build
 
-      - name: Add .nojekyll (serve underscore assets)
-        run: echo > dist/.nojekyll
+      - name: Detect build output directory
+        id: detect
+        run: |
+          # prefer common output dirs; fallback to dist
+          if [ -d "dist" ]; then echo "DEPLOY_DIR=dist" >> $GITHUB_ENV
+          elif [ -d "build" ]; then echo "DEPLOY_DIR=build" >> $GITHUB_ENV
+          elif [ -d "public" ]; then echo "DEPLOY_DIR=public" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_DIR=dist" >> $GITHUB_ENV
+          fi
 
-      # Deploy (unchanged)
+      - name: Ensure deploy directory and add .nojekyll (serve underscore assets)
+        run: |
+          mkdir -p "$DEPLOY_DIR"
+          # create an empty .nojekyll so GitHub Pages will serve files beginning with _
+          : > "$DEPLOY_DIR/.nojekyll"
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-          folder: ./dist
+          folder: ${{ env.DEPLOY_DIR }}
